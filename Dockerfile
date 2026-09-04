@@ -12,9 +12,10 @@ RUN addgroup --system --gid 1001 app && \
     adduser --system --uid 1001 --ingroup app app
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY package.json index.ts format.ts ./
+COPY package.json ./
+COPY src/ ./src/
 
 USER app
 EXPOSE 3000
 
-CMD ["bun", "index.ts"]
+CMD ["bun", "src/index.ts"]
