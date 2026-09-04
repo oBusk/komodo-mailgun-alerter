@@ -1,0 +1,38 @@
+{
+  "name": "komodo-mailgun-alerter",
+  "private": true,
+  "license": "MIT",
+  "module": "index.ts",
+  "type": "module",
+  "packageManager": "bun@1.4.1",
+  "devEngines": {
+    "runtime": {
+      "name": "bun",
+      "version": "1.4.1",
+      "onFail": "download"
+    },
+    "packageManager": {
+      "name": "bun",
+      "version": "1.4.1",
+      "onFail": "download"
+    }
+  },
+  "engines": {
+    "bun": ">=1.4.1"
+  },
+  "scripts": {
+    "dev": "bun --watch index.ts",
+    "start": "bun index.ts",
+    "test": "bun test --pass-with-no-tests",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "lefthook install"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "lefthook": "^2.1.12",
+    "prettier": "^3.9.6",
+    "typescript": "^7"
+  }
+}
