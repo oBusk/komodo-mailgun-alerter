@@ -1,0 +1,16 @@
+node_modules
+.git
+.github
+.claude
+.env
+.env.*
+!.env.example
+*.test.ts
+*.md
+lefthook.yml
+.editorconfig
+.gitattributes
+.gitignore
+.vscode
+.idea
+tsconfig.json
