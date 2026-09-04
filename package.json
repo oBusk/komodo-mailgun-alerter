@@ -34,5 +34,9 @@
     "lefthook": "^2.1.12",
     "prettier": "^3.9.6",
     "typescript": "^7"
+  },
+  "dependencies": {
+    "komodo_client": "^2.3.2",
+    "mailgun.js": "^14.0.0"
   }
 }
