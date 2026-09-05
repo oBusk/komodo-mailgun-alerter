@@ -1,5 +1,6 @@
 {
   "name": "komodo-mailgun-alerter",
+  "version": "0.0.3",
   "private": true,
   "license": "MIT",
   "module": "src/index.ts",
