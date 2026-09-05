@@ -75,7 +75,7 @@ Template for setting up via Komodo's Resource Sync feature:
 name = "mailgun-alerter"
 [stack.config]
 repo = "https://github.com/oBusk/komodo-mailgun-alerter"
-file_paths = ["compose.yml"]
+file_paths = ["compose.yaml"]
 environment = """
   # Recommended to use Komodo variables for secrets
   MAILGUN_API_KEY = [[MAILGUN_API_KEY]]
