@@ -53,8 +53,8 @@ repo = "https://github.com/oBusk/komodo-mailgun-alerter"
 file_paths = ["compose.yml"]
 environment = """
   MAILGUN_API_KEY = [[MAILGUN_API_KEY]]
-  MAILGUN_DOMAIN = [[MAILGUN_DOMAIN]]
-  MAILGUN_FROM = [[MAILGUN_FROM]]
+  MAILGUN_DOMAIN = komodo.example.com
+  MAILGUN_FROM = Komodo Alerts <alerts@komodo.example.com>
   ## Optional: uncomment for EU region
   # MAILGUN_URL = https://api.eu.mailgun.net
 """
@@ -64,25 +64,13 @@ name = "MAILGUN_API_KEY"
 value = "your-mailgun-api-key"
 is_secret = true
 
-[[variable]]
-name = "MAILGUN_DOMAIN"
-value = "mg.yourdomain.com"
-
-[[variable]]
-name = "MAILGUN_FROM"
-value = "Komodo Alerts <alerts@mg.yourdomain.com>"
-
-[[variable]]
-name = "ALERT_EMAILS"
-value = "recipient@example.com"
-
 [[alerter]]
 name = "mailgun"
 [alerter.config]
 [alerter.config.endpoint]
 type = "Custom"
 [alerter.config.endpoint.params]
-url = "http://mailgun-alerter:3000/?to=[[ALERT_EMAILS]]"
+url = "http://mailgun-alerter:3000/?to=alert.reciever@example.com"
 ```
 
 Save and **Execute Sync**.
@@ -108,8 +96,8 @@ services:
 
 ```
 MAILGUN_API_KEY=your-mailgun-api-key
-MAILGUN_DOMAIN=mg.yourdomain.com
-MAILGUN_FROM=Komodo Alerts <alerts@mg.yourdomain.com>
+MAILGUN_DOMAIN=komodo.example.com
+MAILGUN_FROM=Komodo Alerts <alerts@komodo.example.com>
 ```
 
 3. Deploy the stack.
