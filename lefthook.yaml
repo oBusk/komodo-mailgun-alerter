@@ -4,6 +4,6 @@ pre-commit:
     prettier:
       glob: "*.{js,ts,jsx,tsx,json,css,md,yml,yaml}"
       env:
-        PNPM_SHIM_BYPASS: 1
+        PNPM_SHIM_BYPASS: "1"
       run: bun x prettier --write {staged_files}
       stage_fixed: true
