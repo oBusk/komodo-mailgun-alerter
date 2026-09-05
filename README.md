@@ -11,39 +11,64 @@ A [Komodo](https://komo.do/) custom alerter that forwards alerts as emails via [
 ## Environment Variables
 
 | Variable          | Required | Description                                                             |
-| ----------------- | -------- | ----------------------------------------------------------------------- |
+| :---------------- | :------- | :---------------------------------------------------------------------- |
 | `MAILGUN_API_KEY` | Yes      | Your Mailgun API key                                                    |
-| `MAILGUN_DOMAIN`  | Yes      | Your Mailgun sending domain (e.g. `mg.yourdomain.com`)                  |
-| `MAILGUN_FROM`    | Yes      | Sender address (e.g. `Komodo Alerts <alerts@mg.yourdomain.com>`)        |
+| `MAILGUN_DOMAIN`  | Yes      | Your Mailgun sending domain (e.g. `komodo.example.com`)                 |
+| `MAILGUN_FROM`    | Yes      | Sender address (e.g. `Komodo Alerts <alerts@komodo.example.com>`)       |
 | `MAILGUN_URL`     | No       | Mailgun API base URL. Set to `https://api.eu.mailgun.net` for EU region |
-| `PORT`            | No       | HTTP port (default: `3000`)                                             |
-
-## Komodo Alerter Setup
-
-In the Komodo dashboard, create a new **Alerter** resource with endpoint type **Custom** and the URL:
-
-```
-http://<alerter-host>:3000/?to=recipient@example.com
-```
-
-Multiple recipients can be comma-separated:
-
-```
-http://<alerter-host>:3000/?to=alice@example.com,bob@example.com
-```
-
-You can use Komodo's variable interpolation to keep email addresses in variables:
-
-```
-http://<alerter-host>:3000/?to=[[ALERT_EMAILS]]
-```
+| `PORT`            | No       | HTTP port (default: `8080`)                                             |
 
 ## Deployment
 
-<details>
-<summary>Komodo Resource Sync</summary>
+1. Create a new **Stack**
 
-Create a Resource Sync in the Komodo dashboard with mode **UI Defined**. Enable **Sync Resources** and **Sync Variables**, then paste:
+   - Either UI defined
+
+     Compose file:
+
+     ```yaml
+     services:
+       komodo-mailgun-alerter:
+         image: ghcr.io/obusk/komodo-mailgun-alerter:latest
+         container_name: komodo-mailgun-alerter
+         restart: unless-stopped
+     ```
+
+   - Or Git Repo
+
+     - Git Provider: github.com
+     - Repo: oBusk/komodo-mailgun-alerter
+     - Branch: main
+
+2. Add your environment variables in the Stack's **Environment** section:
+
+```env
+# Recommended to use Komodo variables for secrets
+MAILGUN_API_KEY=[[MAILGUN_API_KEY]]
+MAILGUN_DOMAIN=mg.yourdomain.com
+MAILGUN_FROM=Komodo Alerts <alerts@mg.yourdomain.com>
+MAILGUN_URL=https://api.eu.mailgun.net
+```
+
+3. Deploy the Stack.
+
+4. In the Komodo dashboard, create a new **Alerter** resource with endpoint type **Custom** and set the URL:
+
+```
+http://komodo-mailgun-alerter:8080/?to=recipient@example.com
+
+```
+
+Multiple recipients can be separated with commas:
+
+```
+http://komodo-mailgun-alerter:8080/?to=alice@example.com,bob@example.com
+
+```
+
+## Resource Sync
+
+Template for setting up via Komodo's Resource Sync feature:
 
 ```toml
 [[stack]]
@@ -52,11 +77,11 @@ name = "mailgun-alerter"
 repo = "https://github.com/oBusk/komodo-mailgun-alerter"
 file_paths = ["compose.yml"]
 environment = """
+  # Recommended to use Komodo variables for secrets
   MAILGUN_API_KEY = [[MAILGUN_API_KEY]]
   MAILGUN_DOMAIN = komodo.example.com
   MAILGUN_FROM = Komodo Alerts <alerts@komodo.example.com>
-  ## Optional: uncomment for EU region
-  # MAILGUN_URL = https://api.eu.mailgun.net
+  MAILGUN_URL = https://api.mailgun.net
 """
 
 [[variable]]
@@ -65,54 +90,13 @@ value = "your-mailgun-api-key"
 is_secret = true
 
 [[alerter]]
-name = "mailgun"
+name = "Mailgun"
 [alerter.config]
 [alerter.config.endpoint]
 type = "Custom"
 [alerter.config.endpoint.params]
-url = "http://mailgun-alerter:3000/?to=alert.reciever@example.com"
+url = "http://komodo-mailgun-alerter:8080/?to=alert.receiver@example.com"
 ```
-
-Save and **Execute Sync**.
-
-</details>
-
-<details>
-<summary>Docker Compose (manual)</summary>
-
-1. Create a new **Stack** in Komodo with the following compose config:
-
-```yaml
-services:
-  komodo-mailgun-alerter:
-    image: ghcr.io/obusk/komodo-mailgun-alerter:latest
-    container_name: komodo-mailgun-alerter
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-```
-
-2. Add the environment variables to the Stack's **Environment** section:
-
-```
-MAILGUN_API_KEY=your-mailgun-api-key
-MAILGUN_DOMAIN=komodo.example.com
-MAILGUN_FROM=Komodo Alerts <alerts@komodo.example.com>
-```
-
-3. Deploy the stack.
-
-4. Create a new **Alerter** resource with endpoint type **Custom** and URL:
-
-```
-http://komodo-mailgun-alerter:3000/?to=recipient@example.com
-```
-
-5. Optionally configure which **Alert Types** to forward.
-
-6. Click **Test** to verify.
-
-</details>
 
 ## Development
 
@@ -121,8 +105,9 @@ bun install
 bun dev        # start with --watch
 bun test       # run tests
 bun run typecheck
+
 ```
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE) © [oBusk](https://github.com/oBusk)
