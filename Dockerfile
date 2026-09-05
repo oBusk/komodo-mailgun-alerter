@@ -7,12 +7,13 @@ RUN bun install --frozen-lockfile --production
 
 FROM base AS runner
 ENV NODE_ENV=production
+ENV PORT=8080
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json ./
 COPY src/ ./src/
 
 USER bun
-EXPOSE 3000
+EXPOSE $PORT
 
 CMD ["bun", "src/index.ts"]

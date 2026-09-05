@@ -12,7 +12,7 @@ const mg = new Mailgun(FormData).client({
   url: process.env.MAILGUN_URL,
 });
 
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.PORT) || 8080;
 
 Bun.serve({
   port: PORT,
