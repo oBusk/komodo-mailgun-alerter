@@ -2,73 +2,57 @@
 
 A [Komodo](https://komo.do/) custom alerter that forwards alerts as emails via [Mailgun](https://www.mailgun.com/).
 
-## Requirements
-
-- A Mailgun account with a verified sending domain
-- A Mailgun API key
-- A running Komodo instance
-
 ## Environment Variables
 
 | Variable          | Required | Description                                                             |
 | :---------------- | :------- | :---------------------------------------------------------------------- |
 | `MAILGUN_API_KEY` | Yes      | Your Mailgun API key                                                    |
-| `MAILGUN_DOMAIN`  | Yes      | Your Mailgun sending domain (e.g. `komodo.example.com`)                 |
-| `MAILGUN_FROM`    | Yes      | Sender address (e.g. `Komodo Alerts <alerts@komodo.example.com>`)       |
+| `MAILGUN_DOMAIN`  | Yes      | Your Mailgun sending domain (e.g. `mg.example.com`)                     |
+| `MAILGUN_FROM`    | Yes      | Sender address (e.g. `Komodo Alerts <alerts@mg.example.com>`)           |
 | `MAILGUN_URL`     | No       | Mailgun API base URL. Set to `https://api.eu.mailgun.net` for EU region |
 | `PORT`            | No       | HTTP port (default: `8080`)                                             |
 
-## Deployment
+## Setup
 
-1. Create a new **Stack**
+### 1. Deploy the alerter
 
-   - Either UI defined
+Create a Komodo **Stack** with this compose file (or use `compose.yaml` from this repo):
 
-     Compose file:
+```yaml
+services:
+  komodo-mailgun-alerter:
+    image: ghcr.io/obusk/komodo-mailgun-alerter:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+```
 
-     ```yaml
-     services:
-       komodo-mailgun-alerter:
-         image: ghcr.io/obusk/komodo-mailgun-alerter:latest
-         container_name: komodo-mailgun-alerter
-         restart: unless-stopped
-     ```
-
-   - Or Git Repo
-
-     - Git Provider: github.com
-     - Repo: oBusk/komodo-mailgun-alerter
-     - Branch: main
-
-2. Add your environment variables in the Stack's **Environment** section:
+Add your environment variables in the Stack's **Environment** section:
 
 ```env
-# Recommended to use Komodo variables for secrets
 MAILGUN_API_KEY=[[MAILGUN_API_KEY]]
-MAILGUN_DOMAIN=mg.yourdomain.com
-MAILGUN_FROM=Komodo Alerts <alerts@mg.yourdomain.com>
-MAILGUN_URL=https://api.eu.mailgun.net
+MAILGUN_DOMAIN=mg.example.com
+MAILGUN_FROM=Komodo Alerts <alerts@mg.example.com>
+# MAILGUN_URL=https://api.eu.mailgun.net
 ```
 
-3. Deploy the Stack.
+### 2. Create the alerter in Komodo
 
-4. In the Komodo dashboard, create a new **Alerter** resource with endpoint type **Custom** and set the URL:
-
-```
-http://komodo-mailgun-alerter:8080/?to=recipient@example.com
+Create a new **Alerter** resource with endpoint type **Custom** and set the URL to the alerter's address:
 
 ```
-
-Multiple recipients can be separated with commas:
-
-```
-http://komodo-mailgun-alerter:8080/?to=alice@example.com,bob@example.com
-
+http://<host>:8080/?to=recipient@example.com
 ```
 
-## Resource Sync
+Multiple recipients can be comma-separated:
 
-Template for setting up via Komodo's Resource Sync feature:
+```
+http://<host>:8080/?to=alice@example.com,bob@example.com
+```
+
+Replace `<host>` with the IP or hostname of the machine running the alerter.
+
+### Resource Sync
 
 ```toml
 [[stack]]
@@ -77,11 +61,11 @@ name = "mailgun-alerter"
 repo = "https://github.com/oBusk/komodo-mailgun-alerter"
 file_paths = ["compose.yaml"]
 environment = """
-  # Recommended to use Komodo variables for secrets
+# Recommended to use Komodo variables for secrets
   MAILGUN_API_KEY = [[MAILGUN_API_KEY]]
-  MAILGUN_DOMAIN = komodo.example.com
-  MAILGUN_FROM = Komodo Alerts <alerts@komodo.example.com>
-  MAILGUN_URL = https://api.mailgun.net
+  MAILGUN_DOMAIN = mg.example.com
+  MAILGUN_FROM = Komodo Alerts <alerts@mg.example.com>
+  MAILGUN_URL = https://api.eu.mailgun.net
 """
 
 [[variable]]
@@ -95,7 +79,7 @@ name = "Mailgun"
 [alerter.config.endpoint]
 type = "Custom"
 [alerter.config.endpoint.params]
-url = "http://komodo-mailgun-alerter:8080/?to=alert.receiver@example.com"
+url = "http://<host>:8080/?to=recipient@example.com"
 ```
 
 ## Development
@@ -105,7 +89,6 @@ bun install
 bun dev        # start with --watch
 bun test       # run tests
 bun run typecheck
-
 ```
 
 ## License

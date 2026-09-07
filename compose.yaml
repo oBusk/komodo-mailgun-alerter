@@ -1,7 +1,8 @@
 services:
   komodo-mailgun-alerter:
     image: ghcr.io/obusk/komodo-mailgun-alerter:latest
-    container_name: komodo-mailgun-alerter
     restart: unless-stopped
     env_file:
       - .env
+    ports:
+      - "8080:8080"
