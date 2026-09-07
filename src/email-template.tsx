@@ -5,7 +5,7 @@ interface EmailTemplateProps {
   body: string;
   resourceType: string;
   timestamp: string;
-  komodoUrl?: string;
+  resourceUrl?: string;
 }
 
 export function EmailTemplate({
@@ -15,7 +15,7 @@ export function EmailTemplate({
   body,
   resourceType,
   timestamp,
-  komodoUrl,
+  resourceUrl,
 }: EmailTemplateProps): string {
   return (
     <html>
@@ -57,10 +57,10 @@ export function EmailTemplate({
               </tr>
             </tbody>
           </table>
-          {komodoUrl ? (
+          {resourceUrl ? (
             <p style={{ margin: "16px 0 0 0", fontSize: "13px" }}>
-              <a safe href={komodoUrl} style={{ color: "#2563eb" }}>
-                {komodoUrl}
+              <a href={resourceUrl} style={{ color: "#2563eb" }}>
+                Open in Komodo
               </a>
             </p>
           ) : (

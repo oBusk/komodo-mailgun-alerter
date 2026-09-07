@@ -24,6 +24,10 @@ export function formatAlert(
   const timestamp = new Date(alert.ts).toISOString();
   const resourceType = alert.target.type;
 
+  const resourceUrl = options.komodoUrl
+    ? `${options.komodoUrl.replace(/\/+$/, "")}/${resourcePath(alert.target.type)}/${alert.target.id}`
+    : undefined;
+
   const text = [
     alert.resolved ? "RESOLVED" : alert.level,
     "",
@@ -31,7 +35,7 @@ export function formatAlert(
     "",
     `Resource: ${resourceType} (${alert.target.id})`,
     `Time: ${timestamp}`,
-    ...(options.komodoUrl ? ["", options.komodoUrl] : []),
+    ...(resourceUrl ? ["", resourceUrl] : []),
   ].join("\n");
 
   const color = severityColor(alert.resolved ? "OK" : alert.level);
@@ -46,7 +50,7 @@ export function formatAlert(
       body,
       resourceType,
       timestamp,
-      komodoUrl: options.komodoUrl,
+      resourceUrl,
     });
 
   return { subject, text, html };
@@ -172,6 +176,11 @@ function formatData(data: AlertData): string {
     default:
       return JSON.stringify((data satisfies never as AlertData).data, null, 2);
   }
+}
+
+function resourcePath(type: Types.ResourceTarget["type"]): string {
+  if (type === "ResourceSync") return "resource-syncs";
+  return `${type.toLowerCase()}s`;
 }
 
 function severityColor(level: SeverityLevel | string): string {
