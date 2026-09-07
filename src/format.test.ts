@@ -271,6 +271,66 @@ describe("HTML output", () => {
   });
 });
 
+describe("komodoUrl", () => {
+  test("builds resource link in HTML when set", () => {
+    const result = formatAlert(
+      makeAlert({
+        target: { type: "Server", id: "srv-123" },
+        data: { type: "Test", data: { id: "1", name: "test" } },
+      }),
+      { komodoUrl: "https://komodo.example.com" },
+    );
+    expect(result.html).toContain("https://komodo.example.com/servers/srv-123");
+    expect(result.html).toContain("Open in Komodo");
+  });
+
+  test("builds resource link in text when set", () => {
+    const result = formatAlert(
+      makeAlert({
+        target: { type: "Stack", id: "stk-1" },
+        data: { type: "Test", data: { id: "1", name: "test" } },
+      }),
+      { komodoUrl: "https://komodo.example.com" },
+    );
+    expect(result.text).toContain("https://komodo.example.com/stacks/stk-1");
+  });
+
+  test("strips trailing slash from komodoUrl", () => {
+    const result = formatAlert(
+      makeAlert({
+        target: { type: "Server", id: "srv-1" },
+        data: { type: "Test", data: { id: "1", name: "test" } },
+      }),
+      { komodoUrl: "https://komodo.example.com/" },
+    );
+    expect(result.html).toContain("https://komodo.example.com/servers/srv-1");
+    expect(result.html).not.toContain("komodo.example.com//");
+  });
+
+  test("handles ResourceSync path", () => {
+    const result = formatAlert(
+      makeAlert({
+        target: { type: "ResourceSync", id: "rs-1" },
+        data: { type: "Test", data: { id: "1", name: "test" } },
+      }),
+      { komodoUrl: "https://komodo.example.com" },
+    );
+    expect(result.text).toContain(
+      "https://komodo.example.com/resource-syncs/rs-1",
+    );
+  });
+
+  test("omits link when komodoUrl not set", () => {
+    const result = formatAlert(
+      makeAlert({
+        data: { type: "Test", data: { id: "1", name: "test" } },
+      }),
+    );
+    expect(result.html).not.toContain("Open in Komodo");
+    expect(result.html).not.toContain("<a ");
+  });
+});
+
 describe("text output", () => {
   test("contains no HTML tags", () => {
     const result = formatAlert(
