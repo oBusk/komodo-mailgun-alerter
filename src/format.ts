@@ -11,7 +11,14 @@ export interface FormattedAlert {
   html: string;
 }
 
-export function formatAlert(alert: Alert): FormattedAlert {
+export interface FormatOptions {
+  komodoUrl?: string;
+}
+
+export function formatAlert(
+  alert: Alert,
+  options: FormatOptions = {},
+): FormattedAlert {
   const subject = formatSubject(alert);
   const body = formatData(alert.data);
   const timestamp = new Date(alert.ts).toISOString();
@@ -24,6 +31,7 @@ export function formatAlert(alert: Alert): FormattedAlert {
     "",
     `Resource: ${resourceType} (${alert.target.id})`,
     `Time: ${timestamp}`,
+    ...(options.komodoUrl ? ["", options.komodoUrl] : []),
   ].join("\n");
 
   const color = severityColor(alert.resolved ? "OK" : alert.level);
@@ -38,6 +46,7 @@ export function formatAlert(alert: Alert): FormattedAlert {
       body,
       resourceType,
       timestamp,
+      komodoUrl: options.komodoUrl,
     });
 
   return { subject, text, html };

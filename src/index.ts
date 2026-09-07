@@ -12,6 +12,7 @@ const mailgunClient = new Mailgun(FormData).client({
   url: process.env.MAILGUN_URL,
 });
 
+const KOMODO_URL = process.env.KOMODO_URL;
 const PORT = Number(process.env.PORT) || 8080;
 
 Bun.serve({
@@ -35,7 +36,10 @@ Bun.serve({
           return Response.json({ error: "Invalid JSON body" }, { status: 400 });
         }
 
-        const { subject, text, html } = formatAlert(alert);
+        const komodoUrl =
+          new URL(req.url).searchParams.get("komodoUrl") || KOMODO_URL;
+
+        const { subject, text, html } = formatAlert(alert, { komodoUrl });
 
         try {
           await mailgunClient.messages.create(MAILGUN_DOMAIN, {

@@ -4,13 +4,14 @@ A [Komodo](https://komo.do/) custom alerter that forwards alerts as emails via [
 
 ## Environment Variables
 
-| Variable          | Required | Description                                                             |
-| :---------------- | :------- | :---------------------------------------------------------------------- |
-| `MAILGUN_API_KEY` | Yes      | Your Mailgun API key                                                    |
-| `MAILGUN_DOMAIN`  | Yes      | Your Mailgun sending domain (e.g. `mg.example.com`)                     |
-| `MAILGUN_FROM`    | Yes      | Sender address (e.g. `Komodo Alerts <alerts@mg.example.com>`)           |
-| `MAILGUN_URL`     | No       | Mailgun API base URL. Set to `https://api.eu.mailgun.net` for EU region |
-| `PORT`            | No       | HTTP port (default: `8080`)                                             |
+| Variable          | Required | Description                                                                           |
+| :---------------- | :------- | :------------------------------------------------------------------------------------ |
+| `MAILGUN_API_KEY` | Yes      | Your Mailgun API key                                                                  |
+| `MAILGUN_DOMAIN`  | Yes      | Your Mailgun sending domain (e.g. `mg.example.com`)                                   |
+| `MAILGUN_FROM`    | Yes      | Sender address (e.g. `Komodo Alerts <alerts@mg.example.com>`)                         |
+| `MAILGUN_URL`     | No       | Mailgun API base URL. Set to `https://api.eu.mailgun.net` for EU region               |
+| `KOMODO_URL`      | No       | Komodo dashboard URL. Adds a link in alert emails (e.g. `https://komodo.example.com`) |
+| `PORT`            | No       | HTTP port (default: `8080`)                                                           |
 
 ## Setup
 
