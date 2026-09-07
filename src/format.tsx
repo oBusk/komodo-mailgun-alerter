@@ -1,4 +1,5 @@
 import type { Types } from "komodo_client";
+import { EmailTemplate } from "./email-template.tsx";
 
 type Alert = Types.Alert;
 type AlertData = Types.AlertData;
@@ -28,20 +29,16 @@ export function formatAlert(alert: Alert): FormattedAlert {
   const color = severityColor(alert.resolved ? "OK" : alert.level);
   const label = alert.resolved ? "RESOLVED" : alert.level;
 
-  const html = `<!DOCTYPE html>
-<html>
-<body style="margin:0;padding:0;font-family:system-ui,-apple-system,sans-serif">
-  <div style="background:${color};color:#fff;padding:12px 16px;font-weight:bold;font-size:16px">${label}</div>
-  <div style="padding:16px">
-    <h2 style="margin:0 0 12px 0;font-size:18px">${escapeHtml(formatSubjectContent(alert))}</h2>
-    <p style="margin:0 0 16px 0;white-space:pre-line">${escapeHtml(details)}</p>
-    <table style="font-size:13px;color:#666">
-      <tr><td style="padding-right:8px">Resource</td><td>${escapeHtml(resourceType)}</td></tr>
-      <tr><td style="padding-right:8px">Time</td><td>${escapeHtml(timestamp)}</td></tr>
-    </table>
-  </div>
-</body>
-</html>`;
+  const html =
+    "<!DOCTYPE html>" +
+    EmailTemplate({
+      color,
+      label,
+      subject: formatSubjectContent(alert),
+      details,
+      resourceType,
+      timestamp,
+    });
 
   return { subject, text, html };
 }
@@ -176,12 +173,4 @@ function severityColor(level: SeverityLevel | string): string {
     default:
       return "#6b7280";
   }
-}
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }

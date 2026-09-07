@@ -1,6 +1,6 @@
 import type { Types } from "komodo_client";
 import Mailgun from "mailgun.js";
-import { formatAlert } from "./format.ts";
+import { formatAlert } from "./format.tsx";
 
 const MAILGUN_API_KEY = requireEnv("MAILGUN_API_KEY");
 const MAILGUN_DOMAIN = requireEnv("MAILGUN_DOMAIN");

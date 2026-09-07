@@ -1,7 +1,7 @@
 import { test, expect, describe } from "bun:test";
 import type { Types } from "komodo_client";
 type Alert = Types.Alert;
-import { formatAlert } from "./format.ts";
+import { formatAlert } from "./format.tsx";
 
 function makeAlert(overrides: Partial<Alert> & { data: Alert["data"] }): Alert {
   return {

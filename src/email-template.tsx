@@ -1,0 +1,61 @@
+interface EmailTemplateProps {
+  color: string;
+  label: string;
+  subject: string;
+  details: string;
+  resourceType: string;
+  timestamp: string;
+}
+
+export function EmailTemplate({
+  color,
+  label,
+  subject,
+  details,
+  resourceType,
+  timestamp,
+}: EmailTemplateProps): string {
+  return (
+    <html>
+      <body
+        style={{
+          margin: 0,
+          padding: 0,
+          fontFamily: "system-ui,-apple-system,sans-serif",
+        }}
+      >
+        <div
+          style={{
+            background: color,
+            color: "#fff",
+            padding: "12px 16px",
+            fontWeight: "bold",
+            fontSize: "16px",
+          }}
+        >
+          {label}
+        </div>
+        <div style={{ padding: "16px" }}>
+          <h2 safe style={{ margin: "0 0 12px 0", fontSize: "18px" }}>
+            {subject}
+          </h2>
+          <p safe style={{ margin: "0 0 16px 0", whiteSpace: "pre-line" }}>
+            {details}
+          </p>
+          <table style={{ fontSize: "13px", color: "#666" }}>
+            <tbody>
+              <tr>
+                <td style={{ paddingRight: "8px" }}>Resource</td>
+                <td safe>{resourceType}</td>
+              </tr>
+              <tr>
+                <td style={{ paddingRight: "8px" }}>Time</td>
+                <td safe>{timestamp}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </body>
+    </html>
+  ) as string;
+}

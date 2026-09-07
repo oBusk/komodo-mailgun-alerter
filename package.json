@@ -37,6 +37,7 @@
     "typescript": "^7"
   },
   "dependencies": {
+    "@kitajs/html": "^4.2.13",
     "komodo_client": "^2.3.2",
     "mailgun.js": "^14.0.0"
   }
