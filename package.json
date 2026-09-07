@@ -31,10 +31,11 @@
     "prepare": "lefthook install"
   },
   "devDependencies": {
+    "@kitajs/ts-html-plugin": "^4.1.4",
     "@types/bun": "latest",
     "lefthook": "^2.1.12",
     "prettier": "^3.9.6",
-    "typescript": "^7"
+    "typescript": "^6.0.3"
   },
   "dependencies": {
     "@kitajs/html": "^4.2.13",
