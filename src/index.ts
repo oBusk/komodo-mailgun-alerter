@@ -37,7 +37,7 @@ Bun.serve({
         }
 
         const komodoUrl =
-          new URL(req.url).searchParams.get("komodoUrl") || KOMODO_URL;
+          new URL(req.url).searchParams.get("komodo_url") || KOMODO_URL;
 
         const { subject, text, html } = formatAlert(alert, { komodoUrl });
 

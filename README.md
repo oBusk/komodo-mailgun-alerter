@@ -35,6 +35,7 @@ MAILGUN_API_KEY=[[MAILGUN_API_KEY]]
 MAILGUN_DOMAIN=mg.example.com
 MAILGUN_FROM=Komodo Alerts <alerts@mg.example.com>
 # MAILGUN_URL=https://api.eu.mailgun.net
+KOMODO_URL=https://komodo.example.com
 ```
 
 ### 2. Create the alerter in Komodo
@@ -53,6 +54,12 @@ http://<host>:8080/?to=alice@example.com,bob@example.com
 
 Replace `<host>` with the IP or hostname of the machine running the alerter.
 
+You can also override the Komodo host url
+
+```
+http://<host>:8080/?to=recipient@example.com&komodo_url=https://komodo.example.com
+```
+
 ### Resource Sync
 
 ```toml
@@ -67,6 +74,7 @@ environment = """
   MAILGUN_DOMAIN = mg.example.com
   MAILGUN_FROM = Komodo Alerts <alerts@mg.example.com>
   MAILGUN_URL = https://api.eu.mailgun.net
+  KOMODO_URL = https://komodo.example.com
 """
 
 [[variable]]
