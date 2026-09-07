@@ -1,12 +1,12 @@
 import type { Types } from "komodo_client";
 import Mailgun from "mailgun.js";
-import { formatAlert } from "./format.tsx";
+import { formatAlert } from "./format.ts";
 
 const MAILGUN_API_KEY = requireEnv("MAILGUN_API_KEY");
 const MAILGUN_DOMAIN = requireEnv("MAILGUN_DOMAIN");
 const MAILGUN_FROM = requireEnv("MAILGUN_FROM");
 
-const mg = new Mailgun(FormData).client({
+const mailgunClient = new Mailgun(FormData).client({
   username: "api",
   key: MAILGUN_API_KEY,
   url: process.env.MAILGUN_URL,
@@ -38,7 +38,7 @@ Bun.serve({
         const { subject, text, html } = formatAlert(alert);
 
         try {
-          await mg.messages.create(MAILGUN_DOMAIN, {
+          await mailgunClient.messages.create(MAILGUN_DOMAIN, {
             from: MAILGUN_FROM,
             to,
             subject,

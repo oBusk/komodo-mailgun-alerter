@@ -13,14 +13,14 @@ export interface FormattedAlert {
 
 export function formatAlert(alert: Alert): FormattedAlert {
   const subject = formatSubject(alert);
-  const details = formatDetails(alert.data);
+  const body = formatData(alert.data);
   const timestamp = new Date(alert.ts).toISOString();
   const resourceType = alert.target.type;
 
   const text = [
     alert.resolved ? "RESOLVED" : alert.level,
     "",
-    details,
+    body,
     "",
     `Resource: ${resourceType} (${alert.target.id})`,
     `Time: ${timestamp}`,
@@ -34,8 +34,8 @@ export function formatAlert(alert: Alert): FormattedAlert {
     EmailTemplate({
       color,
       label,
-      subject: formatSubjectContent(alert),
-      details,
+      header: formatSubjectContent(alert),
+      body,
       resourceType,
       timestamp,
     });
@@ -44,8 +44,11 @@ export function formatAlert(alert: Alert): FormattedAlert {
 }
 
 function formatSubject(alert: Alert): string {
-  const prefix = alert.resolved ? "[RESOLVED]" : `[${alert.level}]`;
-  return `${prefix} ${formatSubjectContent(alert)}`;
+  return `${formatSubjectPrefix(alert)} ${formatSubjectContent(alert)}`;
+}
+
+function formatSubjectPrefix(alert: Alert): string {
+  return alert.resolved ? "[RESOLVED]" : `[${alert.level}]`;
 }
 
 function formatSubjectContent(alert: Alert): string {
@@ -61,7 +64,7 @@ function extractName(data: AlertData): string | undefined {
   return undefined;
 }
 
-function formatDetails(data: AlertData): string {
+function formatData(data: AlertData): string {
   switch (data.type) {
     case "ServerCpu": {
       const d = data.data;
@@ -158,7 +161,7 @@ function formatDetails(data: AlertData): string {
     case "None":
       return "No alert data";
     default:
-      return JSON.stringify((data as AlertData).data, null, 2);
+      return JSON.stringify((data satisfies never as AlertData).data, null, 2);
   }
 }
 

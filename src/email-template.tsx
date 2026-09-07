@@ -1,8 +1,8 @@
 interface EmailTemplateProps {
   color: string;
   label: string;
-  subject: string;
-  details: string;
+  header: string;
+  body: string;
   resourceType: string;
   timestamp: string;
 }
@@ -10,8 +10,8 @@ interface EmailTemplateProps {
 export function EmailTemplate({
   color,
   label,
-  subject,
-  details,
+  header,
+  body,
   resourceType,
   timestamp,
 }: EmailTemplateProps): string {
@@ -38,10 +38,10 @@ export function EmailTemplate({
         </div>
         <div style={{ padding: "16px" }}>
           <h2 safe style={{ margin: "0 0 12px 0", fontSize: "18px" }}>
-            {subject}
+            {header}
           </h2>
           <p safe style={{ margin: "0 0 16px 0", whiteSpace: "pre-line" }}>
-            {details}
+            {body}
           </p>
           <table style={{ fontSize: "13px", color: "#666" }}>
             <tbody>
