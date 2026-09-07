@@ -25,6 +25,7 @@ export function EmailTemplate({
         }}
       >
         <div
+          safe
           style={{
             background: color,
             color: "#fff",
