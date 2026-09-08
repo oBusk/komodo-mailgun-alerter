@@ -57,17 +57,38 @@ export function formatAlert(
 }
 
 function formatSubject(alert: Alert): string {
-  return `${formatSubjectPrefix(alert)} ${formatSubjectContent(alert)}`;
+  const prefix = formatSubjectPrefix(alert);
+  const content = formatSubjectContent(alert);
+  return prefix ? `${prefix} ${content}` : content;
 }
 
-function formatSubjectPrefix(alert: Alert): string {
-  return alert.resolved ? "[RESOLVED]" : `[${alert.level}]`;
+const resolvableAlertTypes = new Set<AlertData["type"]>([
+  "ServerCpu",
+  "ServerMem",
+  "ServerDisk",
+  "SwarmUnhealthy",
+  "ServerUnreachable",
+]);
+
+function formatSubjectPrefix(alert: Alert): string | undefined {
+  if (alert.resolved && resolvableAlertTypes.has(alert.data.type)) {
+    return "[RESOLVED]";
+  }
+  if (alert.level === "WARNING" || alert.level === "CRITICAL") {
+    return `[${alert.level}]`;
+  }
+  if (alert.level === "OK") {
+    return undefined;
+  }
+  console.warn(`Unknown alert level: ${alert.level satisfies never}`);
+  return undefined;
 }
 
 function formatSubjectContent(alert: Alert): string {
+  const label = alertTypeLabels[alert.data.type];
   const name = extractName(alert.data);
-  if (name) return `${alert.data.type} - ${name}`;
-  return alert.data.type;
+  if (name) return `${label} - ${name}`;
+  return label;
 }
 
 function extractName(data: AlertData): string | undefined {
@@ -76,6 +97,31 @@ function extractName(data: AlertData): string | undefined {
   }
   return undefined;
 }
+
+const alertTypeLabels: Record<AlertData["type"], string> = {
+  ServerCpu: "CPU Usage",
+  ServerMem: "Memory Usage",
+  ServerDisk: "Disk Usage",
+  ServerUnreachable: "Server Unreachable",
+  ServerVersionMismatch: "Version Mismatch",
+  SwarmUnhealthy: "Swarm Unhealthy",
+  ContainerStateChange: "Container State Change",
+  StackStateChange: "Stack State Change",
+  DeploymentImageUpdateAvailable: "Image Update Available",
+  DeploymentAutoUpdated: "Deployment Auto-Updated",
+  StackImageUpdateAvailable: "Image Update Available",
+  StackAutoUpdated: "Stack Auto-Updated",
+  BuildFailed: "Build Failed",
+  RepoBuildFailed: "Repo Build Failed",
+  ProcedureFailed: "Procedure Failed",
+  ActionFailed: "Action Failed",
+  AwsBuilderTerminationFailed: "AWS Termination Failed",
+  ResourceSyncPendingUpdates: "Pending Updates",
+  ScheduleRun: "Scheduled Run",
+  Test: "Test Alert",
+  Custom: "Alert",
+  None: "Alert",
+};
 
 function formatData(data: AlertData): string {
   switch (data.type) {

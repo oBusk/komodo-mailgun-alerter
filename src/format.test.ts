@@ -24,13 +24,13 @@ describe("subject", () => {
         },
       }),
     );
-    expect(result.subject).toBe("[CRITICAL] ServerCpu - web-01");
+    expect(result.subject).toBe("[CRITICAL] CPU Usage - web-01");
   });
 
-  test("resolved overrides level", () => {
+  test("resolved threshold alert uses [RESOLVED]", () => {
     const result = formatAlert(
       makeAlert({
-        level: "CRITICAL" as Types.SeverityLevel,
+        level: "OK" as Types.SeverityLevel,
         resolved: true,
         data: {
           type: "ServerCpu",
@@ -38,17 +38,36 @@ describe("subject", () => {
         },
       }),
     );
-    expect(result.subject).toBe("[RESOLVED] ServerCpu - web-01");
+    expect(result.subject).toBe("[RESOLVED] CPU Usage - web-01");
   });
 
-  test("OK level", () => {
+  test("resolved non-threshold alert has no prefix", () => {
+    const result = formatAlert(
+      makeAlert({
+        level: "OK" as Types.SeverityLevel,
+        resolved: true,
+        data: {
+          type: "StackStateChange",
+          data: {
+            id: "1",
+            name: "cross-seed",
+            from: "restarting" as never,
+            to: "running" as never,
+          },
+        },
+      }),
+    );
+    expect(result.subject).toBe("Stack State Change - cross-seed");
+  });
+
+  test("OK level has no prefix", () => {
     const result = formatAlert(
       makeAlert({
         level: "OK" as Types.SeverityLevel,
         data: { type: "Test", data: { id: "1", name: "my-alerter" } },
       }),
     );
-    expect(result.subject).toBe("[OK] Test - my-alerter");
+    expect(result.subject).toBe("Test Alert - my-alerter");
   });
 });
 
@@ -229,7 +248,7 @@ describe("None", () => {
         data: { type: "None", data: {} },
       }),
     );
-    expect(result.subject).toContain("None");
+    expect(result.subject).toBe("[WARNING] Alert");
     expect(result.text).toContain("No alert data");
   });
 });
