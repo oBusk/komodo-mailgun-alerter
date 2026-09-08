@@ -8,6 +8,7 @@ COPY package.json bun.lock* ./
 RUN --mount=type=cache,target=/root/.bun/install/cache \
     bun install --frozen-lockfile --production --ignore-scripts
 
+COPY tsconfig.json ./
 COPY src/ ./src/
 
 USER bun
