@@ -96,8 +96,9 @@ url = "http://<host>:8080/?to=recipient@example.com"
 ```sh
 bun install
 bun dev        # start with --watch
-bun test       # run tests
+bun test
 bun run typecheck
+bun preview    # email template preview at http://localhost:3001
 ```
 
 ## License

@@ -23,6 +23,7 @@
   },
   "scripts": {
     "dev": "bun --watch src/index.ts",
+    "preview": "bun --preload ./dev/preload.ts --watch dev/preview.ts",
     "start": "bun src/index.ts",
     "test": "bun test --pass-with-no-tests",
     "typecheck": "tsc --noEmit",
