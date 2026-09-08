@@ -21,7 +21,7 @@ export function formatAlert(
 ): FormattedAlert {
   const subject = formatSubject(alert);
   const body = formatData(alert.data);
-  const timestamp = new Date(alert.ts).toISOString();
+  const timestamp = formatTimestamp(alert.ts);
   const resourceType = alert.target.type;
 
   const resourceUrl = options.komodoUrl
@@ -227,6 +227,13 @@ function formatData(data: AlertData): string {
 function resourcePath(type: Types.ResourceTarget["type"]): string {
   if (type === "ResourceSync") return "resource-syncs";
   return `${type.toLowerCase()}s`;
+}
+
+function formatTimestamp(ts: number): string {
+  const d = new Date(ts);
+  const date = d.toISOString().slice(0, 10);
+  const time = d.toISOString().slice(11, 16);
+  return `${date} ${time} UTC`;
 }
 
 function severityColor(level: SeverityLevel | string): string {
