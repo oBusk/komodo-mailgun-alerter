@@ -13,4 +13,4 @@ lefthook.yml
 .gitignore
 .vscode
 .idea
-tsconfig.json
+dev
