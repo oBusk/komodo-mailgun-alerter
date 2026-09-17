@@ -264,16 +264,51 @@ describe("HTML output", () => {
     expect(result.html).toContain("#dc2626");
   });
 
-  test("uses green for resolved", () => {
+  test("uses green and RESOLVED label for resolved threshold alert", () => {
     const result = formatAlert(
       makeAlert({
-        level: "CRITICAL" as Types.SeverityLevel,
+        level: "OK" as Types.SeverityLevel,
         resolved: true,
-        data: { type: "Test", data: { id: "1", name: "test" } },
+        data: {
+          type: "ServerCpu",
+          data: { id: "1", name: "web-01", percentage: 12 },
+        },
       }),
     );
     expect(result.html).toContain("#16a34a");
     expect(result.html).toContain("RESOLVED");
+  });
+
+  test("uses green and an empty label for resolved non-threshold alert", () => {
+    const result = formatAlert(
+      makeAlert({
+        level: "OK" as Types.SeverityLevel,
+        resolved: true,
+        data: {
+          type: "StackStateChange",
+          data: {
+            id: "1",
+            name: "cross-seed",
+            from: "restarting" as never,
+            to: "running" as never,
+          },
+        },
+      }),
+    );
+    expect(result.html).toContain("#16a34a");
+    expect(result.html).not.toContain("RESOLVED");
+    expect(result.html).not.toContain("OK");
+  });
+
+  test("uses green and an empty label for OK level alert", () => {
+    const result = formatAlert(
+      makeAlert({
+        level: "OK" as Types.SeverityLevel,
+        data: { type: "Test", data: { id: "1", name: "my-alerter" } },
+      }),
+    );
+    expect(result.html).toContain("#16a34a");
+    expect(result.html).not.toContain("OK");
   });
 
   test("escapes HTML in content", () => {
@@ -371,5 +406,41 @@ describe("text output", () => {
       }),
     );
     expect(result.text).toContain("2024-09-05");
+  });
+});
+
+describe("text body status line", () => {
+  test("starts with the status when there is one", () => {
+    const result = formatAlert(
+      makeAlert({
+        level: "CRITICAL" as Types.SeverityLevel,
+        data: {
+          type: "ServerCpu",
+          data: { id: "1", name: "web-01", percentage: 95 },
+        },
+      }),
+    );
+    expect(result.text.split("\n")[0]).toBe("CRITICAL");
+  });
+
+  test("starts with the body when there is no status", () => {
+    const result = formatAlert(
+      makeAlert({
+        level: "OK" as Types.SeverityLevel,
+        resolved: true,
+        data: {
+          type: "StackStateChange",
+          data: {
+            id: "1",
+            name: "cross-seed",
+            from: "restarting" as never,
+            to: "running" as never,
+          },
+        },
+      }),
+    );
+    expect(result.text.split("\n")[0]).toBe(
+      "Stack cross-seed changed state: restarting → running",
+    );
   });
 });

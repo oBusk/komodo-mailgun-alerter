@@ -3,7 +3,6 @@ import { EmailTemplate } from "./email-template.tsx";
 
 type Alert = Types.Alert;
 type AlertData = Types.AlertData;
-type SeverityLevel = Types.SeverityLevel;
 
 export interface FormattedAlert {
   subject: string;
@@ -28,9 +27,10 @@ export function formatAlert(
     ? `${options.komodoUrl.replace(/\/+$/, "")}/${resourcePath(alert.target.type)}/${alert.target.id}`
     : undefined;
 
+  const status = alertStatus(alert);
+
   const text = [
-    alert.resolved ? "RESOLVED" : alert.level,
-    "",
+    ...(status ? [status, ""] : []),
     body,
     "",
     `Resource: ${resourceType} (${alert.target.id})`,
@@ -38,14 +38,11 @@ export function formatAlert(
     ...(resourceUrl ? ["", resourceUrl] : []),
   ].join("\n");
 
-  const color = severityColor(alert.resolved ? "OK" : alert.level);
-  const label = alert.resolved ? "RESOLVED" : alert.level;
-
   const html =
     "<!DOCTYPE html>" +
     EmailTemplate({
-      color,
-      label,
+      color: statusColor(status),
+      label: status,
       header: formatSubjectContent(alert),
       body,
       resourceType,
@@ -57,9 +54,9 @@ export function formatAlert(
 }
 
 function formatSubject(alert: Alert): string {
-  const prefix = formatSubjectPrefix(alert);
+  const status = alertStatus(alert);
   const content = formatSubjectContent(alert);
-  return prefix ? `${prefix} ${content}` : content;
+  return status ? `[${status}] ${content}` : content;
 }
 
 const resolvableAlertTypes = new Set<AlertData["type"]>([
@@ -70,18 +67,31 @@ const resolvableAlertTypes = new Set<AlertData["type"]>([
   "ServerUnreachable",
 ]);
 
-function formatSubjectPrefix(alert: Alert): string | undefined {
+type AlertStatus = "RESOLVED" | "WARNING" | "CRITICAL";
+
+function alertStatus(alert: Alert): AlertStatus | undefined {
   if (alert.resolved && resolvableAlertTypes.has(alert.data.type)) {
-    return "[RESOLVED]";
+    return "RESOLVED";
   }
   if (alert.level === "WARNING" || alert.level === "CRITICAL") {
-    return `[${alert.level}]`;
+    return alert.level;
   }
   if (alert.level === "OK") {
     return undefined;
   }
   console.warn(`Unknown alert level: ${alert.level satisfies never}`);
   return undefined;
+}
+
+function statusColor(status: AlertStatus | undefined): string {
+  switch (status) {
+    case "CRITICAL":
+      return "#dc2626";
+    case "WARNING":
+      return "#d97706";
+    default:
+      return "#16a34a";
+  }
 }
 
 function formatSubjectContent(alert: Alert): string {
@@ -234,17 +244,4 @@ function formatTimestamp(ts: number): string {
   const date = d.toISOString().slice(0, 10);
   const time = d.toISOString().slice(11, 16);
   return `${date} ${time} UTC`;
-}
-
-function severityColor(level: SeverityLevel | string): string {
-  switch (level) {
-    case "CRITICAL":
-      return "#dc2626";
-    case "WARNING":
-      return "#d97706";
-    case "OK":
-      return "#16a34a";
-    default:
-      return "#6b7280";
-  }
 }

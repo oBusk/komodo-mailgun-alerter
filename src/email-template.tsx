@@ -1,6 +1,6 @@
 interface EmailTemplateProps {
   color: string;
-  label: string;
+  label?: string;
   header: string;
   body: string;
   resourceType: string;
@@ -36,7 +36,7 @@ export function EmailTemplate({
             fontSize: "16px",
           }}
         >
-          {label}
+          {label ?? "\u00a0"}
         </div>
         <div style={{ padding: "16px" }}>
           <h2 safe style={{ margin: "0 0 12px 0", fontSize: "18px" }}>
