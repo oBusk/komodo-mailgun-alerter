@@ -30,7 +30,7 @@ export function formatAlert(
   const status = alertStatus(alert);
 
   const text = [
-    ...(status ? [status, ""] : []),
+    ...(status ? [status.label, ""] : []),
     body,
     "",
     `Resource: ${resourceType} (${alert.target.id})`,
@@ -41,9 +41,7 @@ export function formatAlert(
   const html =
     "<!DOCTYPE html>" +
     EmailTemplate({
-      status: status
-        ? { label: status, color: statusColor(status) }
-        : undefined,
+      status,
       header: formatSubjectContent(alert),
       body,
       resourceType,
@@ -57,7 +55,7 @@ export function formatAlert(
 function formatSubject(alert: Alert): string {
   const status = alertStatus(alert);
   const content = formatSubjectContent(alert);
-  return status ? `[${status}] ${content}` : content;
+  return status ? `[${status.label}] ${content}` : content;
 }
 
 const resolvableAlertTypes = new Set<AlertData["type"]>([
@@ -68,31 +66,26 @@ const resolvableAlertTypes = new Set<AlertData["type"]>([
   "ServerUnreachable",
 ]);
 
-type AlertStatus = "RESOLVED" | "WARNING" | "CRITICAL";
+export interface AlertStatus {
+  label: "RESOLVED" | "WARNING" | "CRITICAL";
+  color: string;
+}
 
 function alertStatus(alert: Alert): AlertStatus | undefined {
   if (alert.resolved && resolvableAlertTypes.has(alert.data.type)) {
-    return "RESOLVED";
+    return { label: "RESOLVED", color: "#16a34a" };
   }
-  if (alert.level === "WARNING" || alert.level === "CRITICAL") {
-    return alert.level;
+  if (alert.level === "CRITICAL") {
+    return { label: "CRITICAL", color: "#dc2626" };
+  }
+  if (alert.level === "WARNING") {
+    return { label: "WARNING", color: "#d97706" };
   }
   if (alert.level === "OK") {
     return undefined;
   }
   console.warn(`Unknown alert level: ${alert.level satisfies never}`);
   return undefined;
-}
-
-function statusColor(status: AlertStatus): string {
-  switch (status) {
-    case "CRITICAL":
-      return "#dc2626";
-    case "WARNING":
-      return "#d97706";
-    case "RESOLVED":
-      return "#16a34a";
-  }
 }
 
 function formatSubjectContent(alert: Alert): string {

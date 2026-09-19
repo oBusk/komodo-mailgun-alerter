@@ -1,5 +1,7 @@
+import type { AlertStatus } from "./format.ts";
+
 interface EmailTemplateProps {
-  status?: { label: string; color: string };
+  status?: AlertStatus;
   header: string;
   body: string;
   resourceType: string;
