@@ -279,7 +279,7 @@ describe("HTML output", () => {
     expect(result.html).toContain("RESOLVED");
   });
 
-  test("uses green and an empty label for resolved non-threshold alert", () => {
+  test("renders no banner for resolved non-threshold alert", () => {
     const result = formatAlert(
       makeAlert({
         level: "OK" as Types.SeverityLevel,
@@ -295,20 +295,18 @@ describe("HTML output", () => {
         },
       }),
     );
-    expect(result.html).toContain("#16a34a");
+    expect(result.html).not.toContain("#16a34a");
     expect(result.html).not.toContain("RESOLVED");
-    expect(result.html).not.toContain("OK");
   });
 
-  test("uses green and an empty label for OK level alert", () => {
+  test("renders no banner for OK level alert", () => {
     const result = formatAlert(
       makeAlert({
         level: "OK" as Types.SeverityLevel,
         data: { type: "Test", data: { id: "1", name: "my-alerter" } },
       }),
     );
-    expect(result.html).toContain("#16a34a");
-    expect(result.html).not.toContain("OK");
+    expect(result.html).not.toContain("#16a34a");
   });
 
   test("escapes HTML in content", () => {

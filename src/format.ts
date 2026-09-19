@@ -41,8 +41,9 @@ export function formatAlert(
   const html =
     "<!DOCTYPE html>" +
     EmailTemplate({
-      color: statusColor(status),
-      label: status,
+      status: status
+        ? { label: status, color: statusColor(status) }
+        : undefined,
       header: formatSubjectContent(alert),
       body,
       resourceType,
@@ -83,13 +84,13 @@ function alertStatus(alert: Alert): AlertStatus | undefined {
   return undefined;
 }
 
-function statusColor(status: AlertStatus | undefined): string {
+function statusColor(status: AlertStatus): string {
   switch (status) {
     case "CRITICAL":
       return "#dc2626";
     case "WARNING":
       return "#d97706";
-    default:
+    case "RESOLVED":
       return "#16a34a";
   }
 }

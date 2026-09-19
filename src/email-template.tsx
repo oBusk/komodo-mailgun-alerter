@@ -1,6 +1,5 @@
 interface EmailTemplateProps {
-  color: string;
-  label?: string;
+  status?: { label: string; color: string };
   header: string;
   body: string;
   resourceType: string;
@@ -9,8 +8,7 @@ interface EmailTemplateProps {
 }
 
 export function EmailTemplate({
-  color,
-  label,
+  status,
   header,
   body,
   resourceType,
@@ -26,18 +24,22 @@ export function EmailTemplate({
           fontFamily: "system-ui,-apple-system,sans-serif",
         }}
       >
-        <div
-          safe
-          style={{
-            background: color,
-            color: "#fff",
-            padding: "12px 16px",
-            fontWeight: "bold",
-            fontSize: "16px",
-          }}
-        >
-          {label ?? "\u00a0"}
-        </div>
+        {status ? (
+          <div
+            safe
+            style={{
+              background: status.color,
+              color: "#fff",
+              padding: "12px 16px",
+              fontWeight: "bold",
+              fontSize: "16px",
+            }}
+          >
+            {status.label}
+          </div>
+        ) : (
+          <></>
+        )}
         <div style={{ padding: "16px" }}>
           <h2 safe style={{ margin: "0 0 12px 0", fontSize: "18px" }}>
             {header}
